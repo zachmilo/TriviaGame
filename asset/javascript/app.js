@@ -1,3 +1,7 @@
+var triviaQuestions = [];
+var countAnswers = 1;
+var triviaLength = 0;
+
 $( document ).ready(function() {
     $("#options").hide();
     $("#hideQuestion").hide();
@@ -6,16 +10,19 @@ $( document ).ready(function() {
 
 function triviaDataRequest(numQuestion, catagory) {
 
-    var numOfQuestion = numQuestion || 20
+    var numOfQuestion = numQuestion || 20;
     var catagoryID= catagory || "";
     var buildCat = "&category="+catagoryID;
 
+    triviaLength = numOfQuestion;
+
     $.ajax({
-            url: "https://opentdb.com/api.php?amount=" +numQuestion+buildCat,
+            url: "https://opentdb.com/api.php?amount=" +numOfQuestion+buildCat,
             type: "GET",
             dataType:"json"
     }).done(function(data) {
-        return data;
+
+        displayTrivia(data.results);
 
     }).fail(function() {
         console.log("something went wrong");
@@ -32,15 +39,31 @@ function startGame() {
         $("#startButton").hide();
         $("#welcome").hide();
 
-        var triviaQuestions = triviaDataRequest(questionNumber);
+        triviaDataRequest(questionNumber);
     });
 }
 
-function displayQuestion() {
+function displayTrivia(questions) {
 
-}
+    var question = questions.pop();
 
-function displayOptions() {
+    // handle question type question.type
+
+    $("#questionTrack").text("Question "+countAnswers+" of " + triviaLength);
+
+    if(question.type === 'boolean') {
+        //hide 1 and 4
+        //show 2 and 3
+    }
+    else {
+        //show all four
+    } // we will need to make multiple calls to get a mix of questions and mix them uppp
+
+
+
+    countAnswers++;
+    console.log(questions);
+    $("#questionToAnswer").html(question.question);
 
 }
 
