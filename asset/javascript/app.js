@@ -44,29 +44,76 @@ function startGame() {
 }
 
 function displayTrivia(questions) {
+    var question = {};
 
-    var question = questions.pop();
+    for (var hold in questions) {
+        if(questions[hold].type === "boolean"){
+            question = questions[hold];
+            break;
+        }
+    }
 
     // handle question type question.type
 
     $("#questionTrack").text("Question "+countAnswers+" of " + triviaLength);
 
+    var questionStart = 0;
+    var questionEnd = 0;
     if(question.type === 'boolean') {
-        //hide 1 and 4
-        //show 2 and 3
+        $("#hideQuestion2").hide();
+        $("#hideQuestion3").hide();
     }
-    else {
-        //show all four
-    } // we will need to make multiple calls to get a mix of questions and mix them uppp
 
+    var optionsArray = question.incorrect_answers
+    optionsArray.push(question.correct_answer)
+    questionEnd = optionsArray.length-1;
+    var scrambledOptions = mixOptions(optionsArray);
+
+    for(questionStart; questionStart <= questionEnd; questionStart++) {
+        $("#question"+questionStart).text(scrambledOptions[questionStart]);
+    }
 
 
     countAnswers++;
     console.log(questions);
     $("#questionToAnswer").html(question.question);
 
+    answerPicked(question.correct_answer);
 }
 
+function answerPicked(answer) {
+    $("#question0, #question1, #question2, #question3").click(function(e){
+        if( $(this).text() === answer) {
+            $(this).parent().css("background-color","green");
+            return true;
+        }
+        else {
+        $(this).parent().css("background-color","red");    
+        return false;
+        }
+
+    });
+}
+
+function mixOptions(optionsArray){
+
+    var random  = 0;
+    var selectionRandom = [];
+    var alreadyGenerated = [];
+
+    for(var run = optionsArray.length-1; run >= 0; run--) {
+        random = Math.floor(Math.random() * run);
+
+        if(random === optionsArray.length-1) {
+            selectionRandom.push(optionsArray.splice(random));
+        }
+        else {
+            selectionRandom.push(optionsArray.splice(random,1));
+        }
+
+    }
+    return selectionRandom;
+}
 // function selectedCatagory() {
 //     $( "#categorySelected" ).children().click(function() {
 //         console.log(this);
