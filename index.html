@@ -61,34 +61,42 @@
                   </div>
                   <div class="mdl-card__supporting-text">
                       <ul class="demo-list-three mdl-list">
+                          <li class="mdl-list__item mdl-list__item--three-line">
+                            <span class="mdl-list__item-primary-content">
+                              <span>Introduction</span>
+                              <span class="mdl-list__item-text-body">
+                                  You will have 23 seconds represented by the countdown slider when game begins.
+                                  Click start, good luck have fun!
+                              </span>
+                            </span>
+                          </li>
+                          <li class="mdl-list__item mdl-list__item--three-line">
+                            <span class="mdl-list__item-primary-content">
+                              <span>Number of Trivia Questions</span>
+                              <span class="mdl-list__item-text-body">
+                                Please enter a number from 1 to 50. Default is 20.
+                              </span>
+                            </span>
+                            <span class="mdl-list__item-secondary-content">
+                                <form action="#">
+                                    <div class="mdl-textfield mdl-js-textfield">
+                                      <input class="mdl-textfield__input" type="number" pattern="-?[0-9]*(\.[0-9]+)?" id="numQuestion">
+                                      <label class="mdl-textfield__label" for="sample2">Number...</label>
+                                      <span class="mdl-textfield__error">Input is not a number!</span>
+                                    </div>
+                                </form>
+                            </span>
+                          </li>
+
                         <li class="mdl-list__item mdl-list__item--three-line">
                           <span class="mdl-list__item-primary-content">
-                            <i class="material-icons mdl-list__item-avatar">person</i>
-                            <span>Question Catagory</span>
+                            <span>Number Correct</span>
                             <span class="mdl-list__item-text-body">
-                              You can select a category, otherwise it will ask questions from all catagories.
+                              Correct:
                             </span>
                           </span>
-                          <span class="mdl-list__item-secondary-content">
-                                some content
-                          </span>
-                        </li>
-                        <li class="mdl-list__item mdl-list__item--three-line">
-                          <span class="mdl-list__item-primary-content">
-                            <i class="material-icons mdl-list__item-avatar">person</i>
-                            <span>Number of Trivia Questions</span>
-                            <span class="mdl-list__item-text-body">
-                              Please enter a number from 1 to 50.
-                            </span>
-                          </span>
-                          <span class="mdl-list__item-secondary-content">
-                              <form action="#">
-                                  <div class="mdl-textfield mdl-js-textfield">
-                                    <input class="mdl-textfield__input" type="number" pattern="-?[0-9]*(\.[0-9]+)?" id="numQuestion">
-                                    <label class="mdl-textfield__label" for="sample2">Number...</label>
-                                    <span class="mdl-textfield__error">Input is not a number!</span>
-                                  </div>
-                              </form>
+                          <span id="finalScore" class="mdl-list__item-secondary-content">
+                                get playing to find out
                           </span>
                         </li>
                     </ul>
@@ -122,6 +130,10 @@
             <div id="timeBar" class="mdl-cell mdl-cell--6-col options">
                 <input class="mdl-slider mdl-js-slider" type="range"
                 min="0" max="23" value="23" tabindex="0">
+            </div>
+            <div class="mdl-cell mdl-cell--6-col options">
+            <span id="correct" class="mdl-badge" data-badge="0">Correct</span>
+                <span id="incorrect" class="mdl-badge" data-badge="0">Incorrect</span>
             </div>
         </div>
 

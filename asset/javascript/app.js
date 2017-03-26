@@ -1,14 +1,17 @@
 var triviaQuestions = [];
 var countAnswers = 1;
 var triviaLength = 0;
-var time = 23;
 var killTime = 0;
 var questions = [];
+var wrong = 0;
+var right = 0;
 
 $( document ).ready(function() {
     $("#options").hide();
     $("#hideQuestion").hide();
     $("#timeBar").hide();
+    $("#correct").hide();
+    $("#incorrect").hide();
     startGame();
 });
 
@@ -38,10 +41,18 @@ function startGame() {
 
     $( "#startButton" ).on("click", function() {
         var questionNumber = $("#numQuestion").val();
+        countAnswers = 1;
+        wrong = 0;
+        right = 0;
+
+        $("#correct").attr("data-badge",right);
+        $("#incorrect").attr("data-badge",wrong);
 
         $("#options").show();
         $("#hideQuestion").show();
         $("#timeBar").show();
+        $("#correct").show();
+        $("#incorrect").show();
 
         $("#startButton").hide();
         $("#welcome").hide();
@@ -86,18 +97,19 @@ function displayTrivia() {
     $("#questionToAnswer").html(question.question);
 
     answerPicked(question.correct_answer, scrambledOptions);
-    timeCountdown();
+    timeCountdown(question.correct_answer, scrambledOptions);
     countAnswers++;
 
 }
 
 function answerPicked(answer, allOptions) {
-    $("#question0, #question1, #question2, #question3").click(function(e){
-        time = 3;
+    $("#question0, #question1, #question2, #question3").on("click",function(e) {
         clearInterval(killTime);
-
+        $("div").off("click");
         if( $(this).text() === answer) {
             $(this).parent().css("background-color","green");
+            right++;
+            $("#correct").attr("data-badge",right);
             nextQuestion();
             return true;
         }
@@ -106,6 +118,9 @@ function answerPicked(answer, allOptions) {
 
             var rightAnswer = allOptions.indexOf(answer);
             $("#question"+rightAnswer).parent().css("background-color","green");
+
+            wrong++;
+            $("#incorrect").attr("data-badge",wrong);
             nextQuestion();
             return false;
         }
@@ -132,15 +147,24 @@ function mixOptions(optionsArray){
     return selectionRandom;
 }
 
-function timeCountdown() {
+function timeCountdown(answer, allOptions) {
+    time = 23;
     killTime = setInterval(function(){
         $("#timeBar input").val(time);
         if(time === 0) {
             clearInterval(killTime);
-            time = 23;
             $("#timeBar input").val(time);
             // if out of questions end
-            displayTrivia();
+            wrong++;
+            $("#incorrect").attr("data-badge",wrong);
+            if(questions.length-1 === 0) {
+                endGame();
+            }
+            else {
+                var rightAnswer = allOptions.indexOf(answer);
+                $("#question"+rightAnswer).parent().css("background-color","green");
+                nextQuestion();
+            }
         }
         else {
             time--;
@@ -148,6 +172,7 @@ function timeCountdown() {
     },1000);
 }
 function nextQuestion() {
+    time = 3;
     killTime = setInterval(function(){
         $("#timeBar input").val(time);
         if(time === 0) {
@@ -157,14 +182,32 @@ function nextQuestion() {
             $("#question1").parent().css("background-color","#FFFFFF");
             $("#question2").parent().css("background-color","#FFFFFF");
             $("#question3").parent().css("background-color","#FFFFFF");
-            time = 23;
-            // if out of question end
-            displayTrivia();
+            console.log(questions.length-1);
+            if(questions.length === 0) {
+                endGame();
+            }
+            else {
+                displayTrivia();
+            }
         }
         else {
             time--;
         }
     },1000);
+}
+
+
+
+function endGame() {
+    $("#options").hide();
+    $("#hideQuestion").hide();
+    $("#timeBar").hide();
+    $("#correct").hide();
+    $("#incorrect").hide();
+    $("#startButton").show();
+    $("#welcome").show();
+    $("#finalScore").text(right);
+    startGame();
 }
 // function selectedCatagory() {
 //     $( "#categorySelected" ).children().click(function() {
