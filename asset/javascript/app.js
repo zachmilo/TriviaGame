@@ -3,6 +3,7 @@ var countAnswers = 1;
 var triviaLength = 0;
 var time = 23;
 var killTime = 0;
+var questions = [];
 
 $( document ).ready(function() {
     $("#options").hide();
@@ -24,8 +25,9 @@ function triviaDataRequest(numQuestion, catagory) {
             type: "GET",
             dataType:"json"
     }).done(function(data) {
-
-        displayTrivia(data.results);
+        console.log(data.results);
+        questions = data.results;
+        displayTrivia();
 
     }).fail(function() {
         console.log("something went wrong");
@@ -34,7 +36,7 @@ function triviaDataRequest(numQuestion, catagory) {
 
 function startGame() {
 
-    $( "#startButton" ).click(function() {
+    $( "#startButton" ).on("click", function() {
         var questionNumber = $("#numQuestion").val();
 
         $("#options").show();
@@ -48,35 +50,37 @@ function startGame() {
     });
 }
 
-function displayTrivia(questions) {
-    var question = {};
-    var time = 23;
-    // remember to remove this
-    for (var hold in questions) {
-        if(questions[hold].type === "boolean"){
-            question = questions[hold];
-            break;
-        }
-    }
+function displayTrivia() {
 
-    $("#questionTrack").text("Question "+countAnswers+" of " + triviaLength);
-
+    var question = questions.pop();
     var questionStart = 0;
     var questionEnd = 0;
+    var scrambledOptions = []
+    var optionsArray = []
 
+    $("#questionTrack").text("Question "+countAnswers+" of " + triviaLength);
     if(question.type === 'boolean') {
         $("#hideQuestion2").hide();
         $("#hideQuestion3").hide();
     }
+    else{
+        $("#hideQuestion0").show();
+        $("#hideQuestion1").show();
+        $("#hideQuestion2").show();
+        $("#hideQuestion3").show();
+    }
 
-    var optionsArray = question.incorrect_answers
-    optionsArray.push(question.correct_answer)
+    for(var formatArray in question.incorrect_answers) {
+        optionsArray.push(question.incorrect_answers[formatArray]);
+
+    }
+    optionsArray.push(question.correct_answer);
     questionEnd = optionsArray.length-1;
 
-    var scrambledOptions = mixOptions(optionsArray);
+    scrambledOptions = mixOptions(optionsArray);
 
     for(questionStart; questionStart <= questionEnd; questionStart++) {
-        $("#question"+questionStart).text(scrambledOptions[questionStart]);
+        $("#question"+questionStart).html(scrambledOptions[questionStart]);
     }
 
     $("#questionToAnswer").html(question.question);
@@ -84,6 +88,7 @@ function displayTrivia(questions) {
     answerPicked(question.correct_answer, scrambledOptions);
     timeCountdown();
     countAnswers++;
+
 }
 
 function answerPicked(answer, allOptions) {
@@ -104,7 +109,6 @@ function answerPicked(answer, allOptions) {
             nextQuestion();
             return false;
         }
-
     });
 }
 
@@ -118,10 +122,10 @@ function mixOptions(optionsArray){
         random = Math.floor(Math.random() * run);
 
         if(random === optionsArray.length-1) {
-            selectionRandom.push(optionsArray.splice(random));
+            selectionRandom.push(optionsArray.splice(random)[0]);
         }
         else {
-            selectionRandom.push(optionsArray.splice(random,1));
+            selectionRandom.push(optionsArray.splice(random,1)[0]);
         }
 
     }
@@ -135,6 +139,8 @@ function timeCountdown() {
             clearInterval(killTime);
             time = 23;
             $("#timeBar input").val(time);
+            // if out of questions end
+            displayTrivia();
         }
         else {
             time--;
@@ -150,7 +156,10 @@ function nextQuestion() {
             $("#question0").parent().css("background-color","#FFFFFF");
             $("#question1").parent().css("background-color","#FFFFFF");
             $("#question2").parent().css("background-color","#FFFFFF");
-            $("#question2").parent().css("background-color","#FFFFFF");
+            $("#question3").parent().css("background-color","#FFFFFF");
+            time = 23;
+            // if out of question end
+            displayTrivia();
         }
         else {
             time--;
