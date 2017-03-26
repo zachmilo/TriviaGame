@@ -15,16 +15,17 @@ $( document ).ready(function() {
     startGame();
 });
 
-function triviaDataRequest(numQuestion, catagory) {
+
+
+
+function triviaDataRequest(numQuestion) {
 
     var numOfQuestion = numQuestion || 20;
-    var catagoryID= catagory || "";
-    var buildCat = "&category="+catagoryID;
 
     triviaLength = numOfQuestion;
 
     $.ajax({
-            url: "https://opentdb.com/api.php?amount=" +numOfQuestion+buildCat,
+            url: "https://opentdb.com/api.php?amount=" +numOfQuestion,
             type: "GET",
             dataType:"json"
     }).done(function(data) {
@@ -36,6 +37,9 @@ function triviaDataRequest(numQuestion, catagory) {
         console.log("something went wrong");
     });
 }
+
+
+
 
 function startGame() {
 
@@ -60,6 +64,9 @@ function startGame() {
         triviaDataRequest(questionNumber);
     });
 }
+
+
+
 
 function displayTrivia() {
 
@@ -99,22 +106,24 @@ function displayTrivia() {
     answerPicked(question.correct_answer, scrambledOptions);
     timeCountdown(question.correct_answer, scrambledOptions);
     countAnswers++;
-
 }
 
+
+
+
 function answerPicked(answer, allOptions) {
-    $("#question0, #question1, #question2, #question3").on("click",function(e) {
+    $("#question0, #question1, #question2, #question3").parent().on("click",function(e) {
         clearInterval(killTime);
         $("div").off("click");
         if( $(this).text() === answer) {
-            $(this).parent().css("background-color","green");
+            $(this).css("background-color","green");
             right++;
             $("#correct").attr("data-badge",right);
             nextQuestion();
             return true;
         }
         else {
-            $(this).parent().css("background-color","red");
+            $(this).css("background-color","red");
 
             var rightAnswer = allOptions.indexOf(answer);
             $("#question"+rightAnswer).parent().css("background-color","green");
@@ -126,6 +135,9 @@ function answerPicked(answer, allOptions) {
         }
     });
 }
+
+
+
 
 function mixOptions(optionsArray){
 
@@ -147,6 +159,9 @@ function mixOptions(optionsArray){
     return selectionRandom;
 }
 
+
+
+
 function timeCountdown(answer, allOptions) {
     time = 23;
     killTime = setInterval(function(){
@@ -154,7 +169,6 @@ function timeCountdown(answer, allOptions) {
         if(time === 0) {
             clearInterval(killTime);
             $("#timeBar input").val(time);
-            // if out of questions end
             wrong++;
             $("#incorrect").attr("data-badge",wrong);
             if(questions.length-1 === 0) {
@@ -171,6 +185,10 @@ function timeCountdown(answer, allOptions) {
         }
     },1000);
 }
+
+
+
+
 function nextQuestion() {
     time = 3;
     killTime = setInterval(function(){
@@ -198,6 +216,7 @@ function nextQuestion() {
 
 
 
+
 function endGame() {
     $("#options").hide();
     $("#hideQuestion").hide();
@@ -209,41 +228,3 @@ function endGame() {
     $("#finalScore").text(right);
     startGame();
 }
-// function selectedCatagory() {
-//     $( "#categorySelected" ).children().click(function() {
-//         console.log(this);
-//     });
-// }
-
-/*
-* 9 = General Knowledge
-*
-* 10 = Entertainment: Books
-* 11 = Entertainment: Film
-* 12 = Entertainment: Music
-* 13 = Entertainment: Musicals and Theatres
-* 14 = Entertainment: Television
-* 15 = Entertainment: Video Games
-* 16 = Entertainment: Board Games
-* 31 = Entertainment: Japanese Anime and Manga
-* 32 = Entertainment: Cartoon and amp; Animations
-* 29 = Entertainment: Comics
-*
-* 17 = Science and Nature
-* 18 = Science: Computers
-* 19 = Science: Mathematics
-* 30 = Science: Gadgets
-*
-* 21 = Sports
-* 26 = Celebrities
-* * 27 = Animals
-* 28 = Vehicles
-* 9 = General Knowledge
-*
-* 22 = Geography
-* 23 = History
-* 24 = Politics
-* 25 = Art
-* 20 = Mythology
-
- */
