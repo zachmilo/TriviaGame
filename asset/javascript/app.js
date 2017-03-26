@@ -1,10 +1,13 @@
 var triviaQuestions = [];
 var countAnswers = 1;
 var triviaLength = 0;
+var time = 23;
+var killTime = 0;
 
 $( document ).ready(function() {
     $("#options").hide();
     $("#hideQuestion").hide();
+    $("#timeBar").hide();
     startGame();
 });
 
@@ -36,6 +39,8 @@ function startGame() {
 
         $("#options").show();
         $("#hideQuestion").show();
+        $("#timeBar").show();
+
         $("#startButton").hide();
         $("#welcome").hide();
 
@@ -45,7 +50,8 @@ function startGame() {
 
 function displayTrivia(questions) {
     var question = {};
-
+    var time = 23;
+    // remember to remove this
     for (var hold in questions) {
         if(questions[hold].type === "boolean"){
             question = questions[hold];
@@ -53,12 +59,11 @@ function displayTrivia(questions) {
         }
     }
 
-    // handle question type question.type
-
     $("#questionTrack").text("Question "+countAnswers+" of " + triviaLength);
 
     var questionStart = 0;
     var questionEnd = 0;
+
     if(question.type === 'boolean') {
         $("#hideQuestion2").hide();
         $("#hideQuestion3").hide();
@@ -67,29 +72,37 @@ function displayTrivia(questions) {
     var optionsArray = question.incorrect_answers
     optionsArray.push(question.correct_answer)
     questionEnd = optionsArray.length-1;
+
     var scrambledOptions = mixOptions(optionsArray);
 
     for(questionStart; questionStart <= questionEnd; questionStart++) {
         $("#question"+questionStart).text(scrambledOptions[questionStart]);
     }
 
-
-    countAnswers++;
-    console.log(questions);
     $("#questionToAnswer").html(question.question);
 
-    answerPicked(question.correct_answer);
+    answerPicked(question.correct_answer, scrambledOptions);
+    timeCountdown();
+    countAnswers++;
 }
 
-function answerPicked(answer) {
+function answerPicked(answer, allOptions) {
     $("#question0, #question1, #question2, #question3").click(function(e){
+        time = 3;
+        clearInterval(killTime);
+
         if( $(this).text() === answer) {
             $(this).parent().css("background-color","green");
+            nextQuestion();
             return true;
         }
         else {
-        $(this).parent().css("background-color","red");    
-        return false;
+            $(this).parent().css("background-color","red");
+
+            var rightAnswer = allOptions.indexOf(answer);
+            $("#question"+rightAnswer).parent().css("background-color","green");
+            nextQuestion();
+            return false;
         }
 
     });
@@ -113,6 +126,36 @@ function mixOptions(optionsArray){
 
     }
     return selectionRandom;
+}
+
+function timeCountdown() {
+    killTime = setInterval(function(){
+        $("#timeBar input").val(time);
+        if(time === 0) {
+            clearInterval(killTime);
+            time = 23;
+            $("#timeBar input").val(time);
+        }
+        else {
+            time--;
+        }
+    },1000);
+}
+function nextQuestion() {
+    killTime = setInterval(function(){
+        $("#timeBar input").val(time);
+        if(time === 0) {
+            clearInterval(killTime);
+            $("#timeBar input").val(time);
+            $("#question0").parent().css("background-color","#FFFFFF");
+            $("#question1").parent().css("background-color","#FFFFFF");
+            $("#question2").parent().css("background-color","#FFFFFF");
+            $("#question2").parent().css("background-color","#FFFFFF");
+        }
+        else {
+            time--;
+        }
+    },1000);
 }
 // function selectedCatagory() {
 //     $( "#categorySelected" ).children().click(function() {
